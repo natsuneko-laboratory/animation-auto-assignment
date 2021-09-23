@@ -8,7 +8,7 @@
   xsi:schemaLocation="UnityEngine.UIElements ../../../../UIElementsSchema/UnityEngine.UIElements.xsd UnityEditor.UIElements ../../../../UIElementsSchema/UnityEditor.UIElements.xsd">
   <engine:ScrollView class="min-h-full">
     <engine:VisualElement class="container mx-auto my-2">
-      <engine:TextElement text="Auto Animation Assignment - Stalk and Auto-Fix Animation" class="text-lg" />
+      <engine:TextElement text="Animation Auto Assignment - Stalk and Auto-Fix Animation" class="text-lg" />
 
       <engine:VisualElement class="my-4">
         <engine:TextElement

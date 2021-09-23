@@ -29,11 +29,11 @@ namespace NatsunekoLaboratory.HierarchyStalker
         [SerializeField]
         private Transform _transform;
 
-        [MenuItem("Window/Natsuneko Laboratory/Auto Animation Assignment")]
+        [MenuItem("Window/Natsuneko Laboratory/Animation Auto Assignment")]
         public static void ShowWindow()
         {
             var window = GetWindow<HierarchyStalker>();
-            window.titleContent = new GUIContent("Auto Animation Assignment");
+            window.titleContent = new GUIContent("Animation Auto Assignment");
             window.Show();
         }
 
