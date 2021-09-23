@@ -3,7 +3,6 @@ using System.Linq;
 
 using UnityEditor;
 using UnityEditor.UIElements;
-using UnityEditor.VersionControl;
 
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -157,8 +156,8 @@ namespace NatsunekoLaboratory.HierarchyStalker
             }
 
             animation.ClearCurves();
-            foreach (var (binding, curve) in newBindings) 
-                animation.SetCurve(binding.path, binding.type, binding.propertyName, curve);
+            foreach (var (binding, curve) in newBindings)
+                AnimationUtility.SetEditorCurve(animation, binding, curve);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
