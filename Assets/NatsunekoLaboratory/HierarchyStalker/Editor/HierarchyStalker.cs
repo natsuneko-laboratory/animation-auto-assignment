@@ -83,6 +83,15 @@ namespace NatsunekoLaboratory.HierarchyStalker
             };
         }
 
+        public void OnGUI()
+        {
+            var root = rootVisualElement;
+            var button = root.Query<Button>("tracking-button").First();
+
+            var disabled = _animation == null || _transform == null;
+            button.SetEnabled(!disabled);
+        }
+
         private void EnforceCurrentSelections()
         {
             Debug.Log(nameof(EnforceCurrentSelections));
