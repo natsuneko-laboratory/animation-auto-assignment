@@ -1,0 +1,71 @@
+name: "Release by Tag"
+
+on:
+  push:
+    tags:
+      - "v**"
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.vars.outputs.version }}
+    steps:
+      - id: vars
+        run: |
+          VERSION=$(echo ${{ github.ref }} | sed -e 's/refs\/tags\///' | sed -e 's/refs\/heads\///')
+          echo "::set-output name=version::$VERSION"
+  build:
+    runs-on: ubuntu-latest
+    needs: [setup]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      - name: configure
+        run: |
+          mkdir ./dist
+      - uses: natsuneko-laboratory/get-meta-from-glob@main
+        with:
+          includes: |
+            Assets/NatsunekoLaboratory/HierarchyStalker/**/*.*
+          output: ./MetaList
+
+      - uses: natsuneko-laboratory/create-unitypackage@main
+        with:
+          meta: ./MetaList
+          output: dist/AnimationAutoAssignment-${{ needs.setup.outputs.version }}.unitypackage
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: AnimationAutoAssignment
+          path: dist/
+
+  upload-artifacts:
+    runs-on: ubuntu-latest
+    needs: [setup, build]
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
+        with:
+          path: ./dist
+
+      # wasabi does not currently support authentication with OIDC
+      #- name: Configure AWS credential for uploading artifacts
+      #  uses: aws-actions/configure-aws-credentials@v1
+      #  with:
+      #    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #    aws-region: ap-northeast-1
+
+      - name: upload artifacts to s3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-northeast-1
+          AWS_REGION: ap-northeast-1
+        run: |
+          aws s3 cp ./dist/AnimationAutoAssignment/ s3://assets.natsuneko.moe/a/n/AnimationAutoAssignment/ --recursive --endpoint-url=https://s3.ap-northeast-1.wasabisys.com

@@ -2,9 +2,9 @@
 
 Unity Editor Extension that tracks changes on hierarchy and automatically repairs animation property paths.
 
-## Download
+## Installation
 
-You can download UnityPackage from [BOOTH](https://natsuneko.booth.pm/items/3299301).
+Download UnityPackage from [Natsuneko Laboratory](https://natsuneko.moe)
 
 ## License
 
