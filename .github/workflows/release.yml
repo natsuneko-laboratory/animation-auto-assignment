@@ -68,4 +68,4 @@ jobs:
           AWS_DEFAULT_REGION: ap-northeast-1
           AWS_REGION: ap-northeast-1
         run: |
-          aws s3 cp ./dist/AnimationAutoAssignment/ s3://assets.natsuneko.moe/a/n/AnimationAutoAssignment/ --recursive --endpoint-url=https://s3.ap-northeast-1.wasabisys.com
+          aws s3 cp ./dist/AnimationAutoAssignment/ s3://archive.natsuneko.moe/a/n/AnimationAutoAssignment/ --recursive --endpoint-url=https://s3.ap-northeast-1.wasabisys.com
