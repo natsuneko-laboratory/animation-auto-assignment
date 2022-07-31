@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //  Copyright (c) Natsuneko. All rights reserved.
-//  Licensed under the License Zero Parity 7.0.0 (see LICENSE-PARITY file) and MIT (contributions, see LICENSE-MIT file) with exception License Zero Patron 1.0.0 (see LICENSE-PATRON file)
+//  Licensed under the Proprietary License. Visit document website (https://docs.natsuneko.moe/en-US/limited-license/) for more information.
 // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 using System.Collections.Generic;
