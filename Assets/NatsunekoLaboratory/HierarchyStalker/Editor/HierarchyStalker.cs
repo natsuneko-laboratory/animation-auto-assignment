@@ -1,7 +1,7 @@
-﻿// -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+﻿// ------------------------------------------------------------------------------------------
 //  Copyright (c) Natsuneko. All rights reserved.
-//  Licensed under the Proprietary License. Visit document website (https://docs.natsuneko.moe/en-US/limited-license/) for more information.
-// -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//  Licensed under the MIT License. See LICENSE in the project root for license information.
+// ------------------------------------------------------------------------------------------
 
 using System.Collections.Generic;
 using System.Linq;
