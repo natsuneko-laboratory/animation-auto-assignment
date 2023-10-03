@@ -4,7 +4,8 @@ Unity Editor Extension that tracks changes on hierarchy and automatically repair
 
 ## Installation
 
-Download UnityPackage from [Natsuneko Laboratory](https://natsuneko.moe)
+- Download UnityPackage from [Natsuneko Laboratory](https://natsuneko.moe)
+- Clone GitHub Repository
 
 ## License
 
