@@ -1,6 +1,6 @@
 {
   "name": "cat.natsuneko.animation-auto-assignment",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "displayName": "Animation Auto Assignment",
   "description": "Unity Editor Extension that tracks changes on hierarchy and automatically repairs animation property paths.",
   "unity": "2019.4",
