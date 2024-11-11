@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEditor.UIElements;
 
 using UnityEngine;
@@ -23,7 +24,10 @@ namespace NatsunekoLaboratory.HierarchyStalker
         private const string XamlGuid = "b7750c11aaa0c954ea1fa8f1b6490f5a";
 
         [SerializeField]
-        private Animation _animation;
+        private List<Animation> _animations;
+
+        [SerializeField] 
+        private List<AnimatorController> _controllers;
 
         private bool _isTracking;
         private List<string> _selectionPaths;
@@ -92,7 +96,7 @@ namespace NatsunekoLaboratory.HierarchyStalker
             var root = rootVisualElement;
             var button = root.Query<Button>("tracking-button").First();
 
-            var disabled = _animation == null || _transform == null;
+            var disabled = (_animations.Count == 0 && _controllers.Count == 0) || _transform == null;
             button.SetEnabled(!disabled);
         }
 
@@ -113,14 +117,27 @@ namespace NatsunekoLaboratory.HierarchyStalker
 
             Debug.Log(nameof(OnHierarchyChanged));
 
-            var excepts = selectionPaths.Except(_selectionPaths).Select(w =>
+            var expects = selectionPaths.Except(_selectionPaths).Select(w =>
             {
                 var changedToGameObject = selections.Select((v, i) => (GameObject: v, Index: i)).First(v => GetHierarchyPath(v.GameObject.transform) == w);
                 var changedFromHierarchyPath = _selectionPaths[changedToGameObject.Index];
                 return (From: changedFromHierarchyPath, To: changedToGameObject.GameObject);
             });
 
-            FixAnimationPropertyPath(_animation, _transform, excepts.ToList());
+            var changes = expects.ToList();
+            var animations = new List<Animation>(_animations);
+            animations.AddRange(_controllers.SelectMany(controller => controller.animationClips));
+            
+            EditorUtility.DisplayProgressBar("Animation Auto Assignment", "Renaming......", 0);
+
+            foreach (var (animation, index) in animations.Select((w, i) => (w, i)))
+            {
+                EditorUtility.DisplayProgressBar("Animation Auto Assignment", "Renaming......", (float)index / animations.Count);
+                FixAnimationPropertyPath(animation, _transform, changes);
+            }
+            
+            EditorUtility.ClearProgressBar();
+            
             EnforceCurrentSelections();
         }
 

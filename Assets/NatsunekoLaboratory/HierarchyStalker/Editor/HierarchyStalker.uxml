@@ -13,8 +13,9 @@
       <engine:VisualElement class="my-4">
         <engine:TextElement
           class="text-wrap my-2 text-base"
-          text="Tracking Animation" />
-        <editor:PropertyField binding-path="_animation" />
+          text="Tracking Animation or AnimationClip" />
+        <editor:PropertyField binding-path="_animations" />
+        <editor:PropertyField name="animation-controller" binding-path="_controllers" />
 
         <engine:TextElement
           class="text-wrap my-2 text-base"
