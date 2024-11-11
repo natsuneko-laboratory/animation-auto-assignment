@@ -24,10 +24,10 @@ namespace NatsunekoLaboratory.HierarchyStalker
         private const string XamlGuid = "b7750c11aaa0c954ea1fa8f1b6490f5a";
 
         [SerializeField]
-        private List<Animation> _animations;
+        private List<Animation> _animations = new List<Animation>();
 
         [SerializeField] 
-        private List<AnimatorController> _controllers;
+        private List<AnimatorController> _controllers = new List<AnimatorController>();
 
         private bool _isTracking;
         private List<string> _selectionPaths;
