@@ -1,36 +1,111 @@
-name: "Release by Tag"
+name: Release with .NET (Unity)
 
 on:
   push:
     tags:
-      - "v**"
+      - "*"
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
-  setup:
+  vars:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.vars.outputs.version }}
+      version: ${{ steps.version.outputs.version }}
     steps:
-      - id: vars
+      - name: Set version
+        id: version
         run: |
-          VERSION=$(echo ${{ github.ref }} | sed -e 's/refs\/tags\///' | sed -e 's/refs\/heads\///')
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          VERSION=$(echo ${{ github.ref }} | sed -e 's/refs\/tags\///' | sed -e 's/refs\/heads\///' | sed -e 's/\//-/')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-  build:
+  build-unitypackage:
     runs-on: ubuntu-latest
-    needs: [setup]
+    needs: [vars]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
         with:
           lfs: true
 
-      - uses: natsuneko-laboratory/create-unitypackage@v2.2.0
-        with:
-          package: Assets/NatsunekoLaboratory/HierarchyStalker/package.json
-          output: dist/AnimationAutoAssignment-${{ needs.setup.outputs.version }}.unitypackage
+      - run: |
+          mkdir -p dist
 
-      - uses: actions/upload-artifact@v2
+      - uses: natsuneko-laboratory/create-unitypackage@bbb27c1e955b84b7063c1db9ff3430d40bc3e110 # v3.2.0
         with:
-          name: AnimationAutoAssignment
-          path: dist/
+          files-glob: |
+            Assets/NatsunekoLaboratory/HierarchyStalker/**/*.*
+          dest: dist/AnimationAutoAssignment-${{ needs.vars.outputs.version }}.unitypackage
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          path: dist/*.unitypackage
+          name: UnityPackages
+
+  build-vpmpackage:
+    runs-on: ubuntu-latest
+    needs: [vars]
+    steps:
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        with:
+          lfs: true
+
+      - run: |
+          mkdir -p dist
+
+      - uses: natsuneko-laboratory/create-vpmpackage@afd6b5e106f88d14b915c0c538c0315d83bba447 # v1.5.0
+        with:
+          packages: |
+            Assets/NatsunekoLaboratory/HierarchyStalker/package.json
+          outputs: |
+            dist/AnimationAutoAssignment-${{ needs.vars.outputs.version }}.zip
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          path: dist/*.zip
+          name: VPMPackages
+
+  release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      id-token: write
+    needs:
+      - vars
+      - build-unitypackage
+      - build-vpmpackage
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          path: ./dist
+
+      - name: List artifacts
+        id: items
+        run: |
+          ITEMS=$(find ./dist -type f -name "*.zip")
+          echo -e "$ITEMS"
+
+      - name: Publish release
+        uses: softprops/action-gh-release@6da8fa9354ddfdc4aeace5fc48d7f679b5214090 # v2.4.1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          prerelease: ${{ contains(needs.vars.outputs.version, 'alpha') || contains(needs.vars.outputs.version, 'beta') || contains(needs.vars.outputs.version, 'rc') }}
+          generate_release_notes: true
+          files: |
+            ./dist/*/*.zip
+            ./dist/*/*.unitypackage
+
+      - name: Publish release (Remuria)
+        uses: natsuneko-laboratory/publish-vpmpackage@af2855e0de469796240a21e22f5cc26985fdb6ec # v0.2.8
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          packages: |
+            dist/AnimationAutoAssignment-${{ needs.vars.outputs.version }}.zip
