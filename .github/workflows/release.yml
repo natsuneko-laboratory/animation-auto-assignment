@@ -90,7 +90,7 @@ jobs:
       - name: List artifacts
         id: items
         run: |
-          ITEMS=$(find ./dist -type f -name "*.zip")
+          ITEMS=$(find ./dist -type f)
           echo -e "$ITEMS"
 
       - name: Publish release
